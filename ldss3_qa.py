@@ -462,6 +462,50 @@ def plot_saturation(redux, key, outdir):
              f'science): {list(map(int, sid[hot]))}')
 
 
+def plot_noise_model(redux, outdir):
+    """Is the variance model right?  chi = (data - sky - object) x sqrt(ivar)
+    should scatter with sigma 1.  Only the columns where the sky was actually
+    modelled test this; elsewhere the residual still holds the full sky."""
+    s2, _, fname = load_spec2d(redux)
+    if s2 is None:
+        return
+    chi = (s2.sciimg - s2.skymodel - s2.objmodel) * np.sqrt(np.clip(s2.ivarmodel, 0, None))
+    try:
+        gd = (s2.bpmmask.flagged() == False) & np.isfinite(chi) & (s2.waveimg > 0)  # noqa: E712
+    except Exception:
+        gd = np.isfinite(chi) & (s2.waveimg > 0)
+    sky = np.zeros(chi.shape[1])
+    for c in range(chi.shape[1]):
+        if gd[:, c].sum() > 200:
+            sky[c] = np.median(s2.skymodel[:, c][gd[:, c]])
+    sub = np.where(sky > 5)[0]
+    if sub.size < 5:
+        note('no sky-subtracted columns found, skipped the noise-model check')
+        return
+    v = chi[:, sub][gd[:, sub]]
+    sg = 1.4826 * np.median(np.abs(v - np.median(v)))
+
+    fig, ax = plt.subplots(figsize=(7.2, 4.0))
+    ax.hist(v, bins=180, range=(-6, 6), histtype='step', color=C1, lw=1.5,
+            density=True, label=f'measured, sigma = {sg:.3f}')
+    xs = np.linspace(-6, 6, 300)
+    ax.plot(xs, np.exp(-xs ** 2 / 2) / np.sqrt(2 * np.pi), color='0.35', lw=1.1,
+            ls='--', label='unit normal')
+    ax.set_xlabel(r'$\chi$ = (data $-$ sky $-$ object) $\times\ \sqrt{\rm ivar}$')
+    ax.set_ylabel('density')
+    ax.set_title('Noise model, over sky-subtracted columns', fontsize=10.5)
+    ax.legend(fontsize=8.5, frameon=False)
+    rn = np.atleast_1d(s2.detector['ronoise'])
+    ax.text(0.02, 0.02, f'read noise in use: {", ".join(f"{r:.2f}" for r in rn)} e-',
+            transform=ax.transAxes, fontsize=8.2, family='monospace')
+    save(fig, outdir, '08_noise_model')
+    verdict = ('good' if 0.9 <= sg <= 1.15 else
+               'noise UNDERSTATED' if sg > 1.15 else 'noise OVERSTATED')
+    note(f'noise model: sigma(chi) = {sg:.3f} over sky-subtracted columns '
+         f'({verdict}); read noise in use '
+         f'{", ".join(f"{r:.2f}" for r in rn)} e-')
+
+
 # ------------------------------------------------------------------------ main
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
@@ -502,7 +546,7 @@ def main():
                 note(f'{fn.__name__} FAILED: {type(e).__name__}: {e}')
                 traceback.print_exc()
     print('\n== 2D and 1D spectra')
-    for fn in (plot_spec2d, plot_spec1d):
+    for fn in (plot_spec2d, plot_spec1d, plot_noise_model):
         try:
             fn(redux, out / 'science')
         except Exception as e:
@@ -532,6 +576,8 @@ def main():
         fh.write('  * the seam step: under ~0.5 % after normalising is fine\n')
         fh.write('  * the wavelength jump across the seam: should be < 0.1 A\n')
         fh.write('  * slits flagged near saturation are alignment boxes, not science\n')
+        fh.write('  * sigma(chi) should be close to 1.  Much above it means the\n')
+        fh.write('    variance model understates the noise -- check the read noise.\n')
 
     print('\n--- summary ---')
     print((out / 'SUMMARY.txt').read_text())

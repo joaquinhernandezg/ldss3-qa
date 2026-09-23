@@ -254,7 +254,12 @@ not be trusted. Say so immediately.
 If no slit lies across the seam, both report "not measurable". That is normal
 for some masks.
 
-**4. The 2D overview** (`04_spec2d_overview.png`). Slit traces should sit on the
+**4. The noise model.** `sigma(chi)` should be close to 1. Much above it and
+the variance model is understating the noise — the read noise is the first
+suspect. Much below and it is overstating it. Values near 1.0 mean the
+uncertainties on your extracted spectra can be believed.
+
+**5. The 2D overview** (`04_spec2d_overview.png`). Slit traces should sit on the
 illuminated slits; object traces should sit on the objects. Look for slits with
 no trace, or traces drifting off their slit.
 
@@ -322,12 +327,25 @@ converter clips. A saturation level taken from the full well would sit above
 anything the detector can produce and would never flag a single pixel. The
 pipeline therefore sets it from the ADC ceiling.
 
-**A caution on read noise.** Every frame we have seen carries `SPEED='Fast'`
-in the header but `ENOISE` = 4.67 / 5.06 e-, which are the *Slow* values from
-the table above; the Fast values are 7.0 / 7.2. The header does not appear to
-track the readout mode. The pipeline uses the header values, because they are
-per-frame and there is nothing better to use, but if the noise looks optimistic
-in your reduction this is the first thing to check. Tell Joaquin if you see it.
+**The `ENOISE` header card is wrong — do not trust it.** Every frame we have
+seen carries `SPEED='Fast'` but `ENOISE` = 4.67 / 5.06 e-, which are the *Slow*
+values from the table above. Measuring the read noise directly from differences
+of bias pairs gives:
+
+| Epoch | amp 1 | amp 2 |
+|---|---|---|
+| 2022 | 6.49 ± 0.75 | 6.42 ± 0.57 |
+| 2018–19 | 6.78 ± 0.48 | 7.06 ± 0.76 |
+
+All four are within about 1σ of the published **Fast** values (7.0 / 7.2) and
+27–45 % above what `ENOISE` claims. The pipeline therefore takes the read noise
+from the published table, keyed on `SPEED`, and only falls back on `ENOISE` —
+with a warning — for a readout mode not in the table.
+
+This is not cosmetic. With `ENOISE`, the scatter of
+(data − sky − object) × √ivar over the sky-subtracted columns was **1.303**,
+meaning the variance model understated the noise by 30 %. With the published
+values it is **0.992**. The QA script reports this number; see §6.
 
 Gain is read per-frame from `EGAIN` (1.65 and 1.47 e-/ADU in our data).
 

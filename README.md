@@ -60,6 +60,7 @@ LDSS3_QA/
     04_spec2d_overview.png        sky-subtracted 2D with slit + object traces
     05_wavelength_across_seam.png wavelength continuity across the join
     06_spec1d.png                 extracted spectra
+    08_noise_model.png            is the variance model right?
   pypeit_qa/                      PypeIt's own QA, copied verbatim
   *.pypeit *.calib *.par *.log    the inputs, so the run can be reproduced
 ```
@@ -82,6 +83,12 @@ is expected, not a failure.
 two amplifier halves meet — that is a small residual in the relative gain of the
 two amplifiers. After normalising it should fall below about 0.5 %. If it does
 not, the amplifier join or the flat is wrong.
+
+**The noise model.** `sigma(chi)` is the scatter of
+(data − sky − object) × √ivar over the columns where the sky was actually
+modelled. It should be close to 1. Above ~1.15 the variance model is
+understating the noise and the error bars on your spectra are too small; the
+read noise is the usual cause.
 
 **The wavelength jump across the seam.** Should be well under 0.1 Å. Values seen
 in testing were 0.003–0.018 Å. A jump of an Ångström or more means the two
