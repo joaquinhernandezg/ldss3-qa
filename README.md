@@ -95,8 +95,9 @@ If no slit happens to lie across the seam, the last two checks report
 - Only 1×1 binning has been tested. The seam is assumed at spatial pixel 1024,
   which is correct for unbinned data; for binned data that constant in
   `ldss3_qa.py` needs dividing by the spatial binning.
-- The saturation check compares against the ADC ceiling at the amplifier-1 gain
-  (65535 ADU × 1.65). If your readout speed differs, the gain differs and the
-  threshold shifts slightly. It is a flag, not a measurement.
+- The saturation check compares against the ADC ceiling, which is 65535 ADU ×
+  gain in electrons. The gain is read from your reduction, so it follows your
+  readout mode; if it cannot be read the script says so and assumes 1.65. It is
+  a flag, not a measurement.
 - The script reads the first `spec2d`/`spec1d` pair it finds for the 2D and 1D
   checks, not all of them. For a multi-frame run it is a spot check.

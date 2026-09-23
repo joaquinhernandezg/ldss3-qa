@@ -295,6 +295,44 @@ no trace, or traces drifting off their slit.
 
 ---
 
+## 7b. Detector numbers
+
+Published LDSS3-C properties, and how the pipeline uses them.
+
+| Property | Value |
+|---|---|
+| Full well | ~205,000 e- (10% non-linear) |
+| Non-linearity (1%) | > 175,000 e- |
+| ADC | 16-bit, so 65535 ADU maximum |
+| Readout modes | Slow, Fast, Turbo |
+
+Read noise, e-, by mode and amplifier:
+
+| Mode | amp 1 (C1) | amp 2 (C2) |
+|---|---|---|
+| Slow | 4.4 | 5.3 |
+| Fast | 7.0 | 7.2 |
+| Turbo | ~10 | ~10 |
+
+**Saturation is set by the ADC, not by the full well.** At a gain of
+1.65 e-/ADU the most a pixel can record is 65535 x 1.65 = 108,133 e-, and at
+1.47 it is 96,336 e-. Both are well below the 175,000 e- where the CCD starts
+to depart from linear, so the response is linear right up to the point the
+converter clips. A saturation level taken from the full well would sit above
+anything the detector can produce and would never flag a single pixel. The
+pipeline therefore sets it from the ADC ceiling.
+
+**A caution on read noise.** Every frame we have seen carries `SPEED='Fast'`
+in the header but `ENOISE` = 4.67 / 5.06 e-, which are the *Slow* values from
+the table above; the Fast values are 7.0 / 7.2. The header does not appear to
+track the readout mode. The pipeline uses the header values, because they are
+per-frame and there is nothing better to use, but if the noise looks optimistic
+in your reduction this is the first thing to check. Tell Joaquin if you see it.
+
+Gain is read per-frame from `EGAIN` (1.65 and 1.47 e-/ADU in our data).
+
+---
+
 ## 8. Useful extra settings
 
 Cut spurious detections near slit edges on multi-slit data:

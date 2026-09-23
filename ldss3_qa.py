@@ -411,6 +411,22 @@ def plot_saturation(redux, key, outdir):
     if raw is None:
         return
     st = SlitTraceSet.from_file(str(sp), chk_version=False)
+
+    # The ADC is 16-bit, so the ceiling in electrons is 65535 x gain.  Read the
+    # gain from the reduction rather than assuming it: it differs between the
+    # two amplifiers and with the readout mode (Slow / Fast / Turbo).
+    gain = None
+    try:
+        s2, _, _ = load_spec2d(redux)
+        if s2 is not None:
+            gain = np.atleast_1d(s2.detector['gain']).astype(float)
+    except Exception:
+        pass
+    if gain is None or gain.size == 0:
+        gain = np.array([1.65])
+        note('could not read the gain from the reduction; assuming 1.65 e-/ADU '
+             'for the saturation check')
+    ceiling = 65535.0 * float(np.max(gain))
     mid = raw.shape[0] // 2
     sid, peak = [], []
     for i in range(st.nslits):
@@ -425,14 +441,14 @@ def plot_saturation(redux, key, outdir):
     if not sid:
         return
     sid, peak = np.array(sid), np.array(peak)
-    ceiling = 65535.0 * 1.65     # ADC ceiling in e- at the amp-1 gain
     hot = peak > 0.6 * ceiling
     fig, ax = plt.subplots(figsize=(9.6, 3.6))
     ax.bar(np.arange(sid.size)[~hot], peak[~hot], color=C1, label='normal')
     if hot.any():
         ax.bar(np.arange(sid.size)[hot], peak[hot], color=C2, label='near saturation')
     ax.axhline(ceiling, color=CG, lw=1.3, ls='--')
-    ax.text(0, ceiling, ' ADC ceiling', color=CG, fontsize=8, va='bottom')
+    ax.text(0, ceiling, f' ADC ceiling (65535 ADU x gain {np.max(gain):.2f})',
+            color=CG, fontsize=8, va='bottom')
     ax.set_xticks(np.arange(sid.size))
     ax.set_xticklabels([str(s) for s in sid], rotation=90, fontsize=7)
     ax.set_xlabel('slit spat_id')
