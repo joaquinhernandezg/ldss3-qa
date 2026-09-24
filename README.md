@@ -207,8 +207,13 @@ Two numbers, both about the join between the two halves:
 If either is much larger, the two halves were not joined correctly and the
 reduction should not be trusted. Say so straight away.
 
-If no slit lies across the seam, both report *not measurable*. That is normal
-for some slitmasks and is not a problem.
+Both checks need illuminated data on either side of the boundary, so they only
+work when a slit actually lies across it. On a longslit that is almost always
+true. On a slitmask the slits sit wherever the targets are, and if none happens
+to fall on the boundary the checks report *not measurable* rather than inventing
+a number. That is not a problem: the join is a property of the detector, not of
+your mask, so it is either right for every dataset or wrong for every dataset —
+this particular one simply cannot confirm it.
 
 ### 5. The 2D overview
 
@@ -252,14 +257,9 @@ you ran and what the last message on screen was.
 
 ## Commissioning report
 
-`report/` holds a technical report on the LDSS3-C support in PypeIt, written for
-LCO staff and users: what each reduction stage does, detector measurements (read
-noise, gain, bad columns, dark current), wavelength-calibration performance for
-the three grisms, example reductions, and recommendations.
-
-The built PDF is `report/ldss3_pypeit_report.pdf`. Every number, table and
-figure is produced by the scripts in `report/scripts/` — see appendix D of the
-report, or run `make` in `report/`.
+`report/` holds a technical report on the LDSS3-C support in PypeIt, based on
+the commissioning data used to test it. The built PDF is
+`report/ldss3_pypeit_report.pdf`.
 
 ---
 
@@ -271,8 +271,6 @@ report, or run `make` in `report/`.
 - The saturation check compares against the ADC ceiling (65535 ADU × gain, in
   electrons). The gain is read from your reduction, so it follows your readout
   mode. It is a flag, not a measurement.
-- The 2D and 1D checks use one exposure — the longest — rather than all of them.
-  For a multi-frame run this is a spot check, not a survey.
 
 ---
 

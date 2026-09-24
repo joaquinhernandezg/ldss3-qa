@@ -251,8 +251,11 @@ extract science from them. This is expected and is not something to fix.
 If either is much larger, the amplifier join is wrong and the reduction should
 not be trusted. Say so immediately.
 
-If no slit lies across the seam, both report "not measurable". That is normal
-for some masks.
+Both checks need illuminated data on either side of the boundary, so they only
+work when a slit actually lies across it — almost always true on a longslit,
+not always on a slitmask. If none does, they report "not measurable" rather
+than inventing a number. That is not a problem: the join is a property of the
+detector, not of your mask.
 
 **4. The noise model.** `sigma(chi)` should be close to 1. Much above it and
 the variance model is understating the noise — the read noise is the first
