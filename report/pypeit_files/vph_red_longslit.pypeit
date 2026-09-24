@@ -1,0 +1,40 @@
+# Auto-generated PypeIt input file using PypeIt version: 2.0.1.dev1241+gf3a1f1d27.d20260922
+# UTC 2026-09-24T13:50:12.940+00:00
+
+# User-defined execution parameters
+[rdx]
+    spectrograph = magellan_ldss3
+
+# Setup
+setup read
+Setup vph_red_longslit:
+  binning: 1,1
+  decker: 1.0_center
+  dispname: VPH-Red
+  filter1: OG590
+setup end
+
+# Data block 
+data read
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/e180402_03
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/e190219_20
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/e190221_22
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/e191206_07
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/e201124_25
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/nov22_atm3a2
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/ut251222_23
+      filename |                 frametype |                 ra |                 dec |                 target | dispname |     decker | binning |                mjd | airmass | exptime | filter1 | amp | calib
+ccd1938c1.fits |                  arc,tilt |  88.12208333333332 |  15.879305555555556 | GD71 VPH-RED OG590 Arc |  VPH-Red | 1.0_center |     1,1 |  58534.08739583333 |   1.549 |     2.0 |   OG590 |   1 |     0
+ccd1939c1.fits |                  arc,tilt |  88.12208333333332 |  15.879305555555556 | GD71 VPH-RED OG590 Arc |  VPH-Red | 1.0_center |     1,1 |  58534.08826388889 |   1.553 |    14.0 |   OG590 |   1 |     0
+ccd1940c1.fits | pixelflat,illumflat,trace |  88.12208333333332 |  15.879305555555556 |  GD71 VPH-RED OG590 FF |  VPH-Red | 1.0_center |     1,1 |  58534.08966435185 |    1.56 |    14.0 |   OG590 |   1 |     0
+ccd1941c1.fits | pixelflat,illumflat,trace |  88.12208333333332 |  15.879305555555556 |  GD71 VPH-RED OG590 FF |  VPH-Red | 1.0_center |     1,1 |  58534.09023148148 |   1.563 |    14.0 |   OG590 |   1 |     0
+ccd1935c1.fits |                   science |  88.12208333333332 |   15.87938888888889 |     GD71 VPH-RED OG590 |  VPH-Red | 1.0_center |     1,1 |  58534.08111111111 |    1.52 |   120.0 |   OG590 |   1 |     0
+ccd1936c1.fits |                   science |  88.12208333333332 |  15.879277777777778 |     GD71 VPH-RED OG590 |  VPH-Red | 1.0_center |     1,1 |  58534.08325231481 |    1.53 |   120.0 |   OG590 |   1 |     0
+ccd1937c1.fits |                   science |  88.12208333333332 |  15.879305555555556 |     GD71 VPH-RED OG590 |  VPH-Red | 1.0_center |     1,1 |  58534.08503472222 |   1.538 |   120.0 |   OG590 |   1 |     0
+ccd1934c1.fits |                  standard |  88.12208333333332 |   15.87938888888889 |     GD71 VPH-RED OG590 |  VPH-Red | 1.0_center |     1,1 | 58534.080462962964 |   1.518 |     1.0 |   OG590 |   1 |     0
+ccd2004c1.fits |                  arc,tilt | 130.38458333333332 | -32.934999999999995 |            LTT3218 arc |  VPH-Red | 1.0_center |     1,1 |  58534.18900462963 |   1.035 |     2.0 |   OG590 |   1 |     1
+ccd2005c1.fits | pixelflat,illumflat,trace | 130.38458333333332 | -32.934999999999995 |         LTT3218 flatQh |  VPH-Red | 1.0_center |     1,1 |  58534.19011574074 |   1.036 |     8.0 |   OG590 |   1 |     1
+ccd2006c1.fits | pixelflat,illumflat,trace | 130.38458333333332 | -32.934999999999995 |         LTT3218 flatQh |  VPH-Red | 1.0_center |     1,1 | 58534.190613425926 |   1.037 |     8.0 |   OG590 |   1 |     1
+ccd2007c1.fits | pixelflat,illumflat,trace | 130.38458333333332 | -32.934999999999995 |         LTT3218 flatQh |  VPH-Red | 1.0_center |     1,1 | 58534.191099537034 |   1.038 |     8.0 |   OG590 |   1 |     1
+data end
+

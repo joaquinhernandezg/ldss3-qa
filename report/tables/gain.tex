@@ -1,0 +1,30 @@
+\begin{table}[t]
+  \centering\small
+  \caption{Gain (\si{\electron\per\adu}) from photon-transfer curves of flat pairs.
+    Uncertainties are bootstrap estimates for each set. Sets marked $\dagger$
+    depart from \code{EGAIN} by more than 10\,\% on at least one amplifier,
+    because the lamp or illumination changed between the exposures of a pair, and
+    are excluded from the mean.}
+  \label{tab:gain}
+  \begin{tabular}{llllrcc}
+    \toprule
+    Night & Grism & Slit/mask & $t_{\rm exp}$ & Pairs & Amp.~1 & Amp.~2 \\
+    \midrule
+    e180403\_04 & VPH-All & 1.0\_center & 10s & 4 & \num{1.619 \pm 0.005} & \num{1.414 \pm 0.006} \\
+    e190218\_19 & VPH-Blue & 1.0\_center & 70s & 3 & \num{1.632 \pm 0.006} & \num{1.437 \pm 0.004} \\
+    e190219\_20 & VPH-Blue & 1.0\_center & 70s & 1 & \num{1.652 \pm 0.003} & \num{1.452 \pm 0.005} \\
+    e190219\_20 & VPH-Red & 1.0\_center & 14s & 1 & \num{1.654 \pm 0.004} & \num{1.464 \pm 0.004} \\
+    e190219\_20 & VPH-Red & 1.0\_center & 8s & 1 & \num{1.650 \pm 0.003} & \num{1.460 \pm 0.003} \\
+    e201124\_25 & VPH-Blue & 1.0\_center & 70s & 1 & \num{1.664 \pm 0.004} & \num{1.444 \pm 0.005} \\
+    nov22\_atm3a2 & VPH-Blue & ATM3a2\_1 & 70s & 3 & \num{1.594 \pm 0.005} & \num{1.393 \pm 0.014}$^\dagger$ \\
+    nov22\_atm3a2 & VPH-Blue & ATM3a2\_1 & 80s & 1 & \num{1.642 \pm 0.007} & \num{1.420 \pm 0.005} \\
+    ut251222\_23 & VPH-Red & 1.00\_center & 14s & 4 & \num{0.857 \pm 0.068} & \num{0.601 \pm 0.053}$^\dagger$ \\
+    ut251222\_23 & VPH-Red & CDFS01 & 14s & 4 & \num{1.626 \pm 0.024} & \num{1.117 \pm 0.111}$^\dagger$ \\
+    ut251222\_23 & VPH-Red & CDFS03 & 14s & 4 & \num{0.736 \pm 0.053} & \num{0.715 \pm 0.048}$^\dagger$ \\
+    ut251222\_23 & VPH-Red & CDFS05 & 14s & 4 & \num{1.672 \pm 0.006} & \num{1.424 \pm 0.009} \\
+    \midrule
+    \multicolumn{5}{l}{Mean of accepted sets} & \num{1.65 \pm 0.01} & \num{1.44 \pm 0.01} \\
+    \multicolumn{5}{l}{\code{EGAIN}} & 1.65 & 1.47 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

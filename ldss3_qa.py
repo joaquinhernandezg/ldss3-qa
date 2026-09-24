@@ -34,6 +34,7 @@ SEAM = 1024          # amplifier boundary, trimmed unbinned frame
 C1, C2, CG = '#2E6F9E', '#B0543C', '#B4881C'
 
 notes = []
+HOLES = set()        # spat_ids of apertures identified as alignment holes
 
 
 def note(msg):
@@ -72,12 +73,11 @@ def load_spec2d(redux):
     f2 = sorted((redux / 'Science').glob('spec2d_*.fits'))
     if not f2:
         return None, None, None
-    pick = None
-    for f in f2:
-        if f.with_name(f.name.replace('spec2d_', 'spec1d_')).exists():
-            pick = f
-            break
-    pick = pick or f2[0]
+    # Prefer the longest exposure with a spec1d file: standards are reduced
+    # without a global sky model and are not useful for the sky/noise checks.
+    from astropy.io import fits
+    have1d = [f for f in f2 if f.with_name(f.name.replace('spec2d_', 'spec1d_')).exists()] or f2
+    pick = max(have1d, key=lambda f: float(fits.getheader(str(f), 0).get('EXPTIME', 0)))
     a = AllSpec2DObj.from_fits(str(pick), chk_version=False)
     s2 = a[a.detectors[0]]
     f1 = pick.with_name(pick.name.replace('spec2d_', 'spec1d_'))
@@ -134,7 +134,8 @@ def plot_seam(redux, key, outdir):
     if sp.exists():
         st = SlitTraceSet.from_file(str(sp), chk_version=False)
         mid = st.left_init.shape[0] // 2
-        spans = bool(((st.left_init[mid] < SEAM) & (st.right_init[mid] > SEAM)).any())
+        room = np.minimum(SEAM - st.left_init[mid], st.right_init[mid] - SEAM)
+        spans = bool((room > 0).any())
 
     fig = plt.figure(figsize=(12.2, 4.4))
     gs = fig.add_gridspec(2, 2, width_ratios=[1.9, 1.15], hspace=0.62, wspace=0.22)
@@ -151,23 +152,33 @@ def plot_seam(redux, key, outdir):
     axf.set_ylabel('flat, column median')
     axf.set_title('Spatial profile of the combined flat', fontsize=10)
 
+    # The step is measured inside the slit that spans the seam: the fit windows
+    # must not reach the slit edges, or the edge of the illumination is taken
+    # for a discontinuity.
     gap, win = 8, 110
+    if spans:
+        win = int(min(win, np.max(room) - gap - 3))
+        if win < 12:
+            spans = False
+            win = 110
     sl = slice(SEAM - gap - win, SEAM + gap + win)
     axr.plot(np.arange(SEAM - gap - win, SEAM + gap + win), prof[sl], lw=1.0, color='0.25')
     axr.axvline(SEAM, color=CG, lw=1.5, ls='--')
 
-    if not spans:
-        axr.set_title('No slit spans the seam', fontsize=10)
+    jump = step_across(prof, win=win)[0] if spans else None
+    if jump is None:
+        axr.set_title('No slit spans enough of the seam', fontsize=10)
         axn.axis('off')
-        note('no slit spans the amplifier seam, so the flux step is not measurable')
+        note('no slit spans enough of the amplifier seam, so the flux step is not '
+             'measurable')
     else:
-        jump, el, er = step_across(prof)
+        jump, el, er = step_across(prof, win=win)
         axr.plot([SEAM, SEAM], [el, er], color=CG, lw=2.6, solid_capstyle='butt')
         axr.set_title(f'Combined flat: {jump:+.2f} %', fontsize=10)
         pfn = getattr(fi, 'pixelflat_norm', None)
         jn = None
         if pfn is not None:
-            jn, eln, ern = step_across(np.median(pfn, axis=0))
+            jn, eln, ern = step_across(np.median(pfn, axis=0), win=win)
             if jn is not None:
                 axn.plot(np.arange(SEAM - gap - win, SEAM + gap + win),
                          np.median(pfn, axis=0)[sl], lw=1.0, color='0.25')
@@ -252,6 +263,12 @@ def plot_wavecal(redux, key, outdir):
     rms, fwhm = np.array(rms), np.array(fwhm)
     med = np.median(dwave)
     good = np.abs(dwave - med) / med < 0.05
+    # Slitmask alignment holes are traced as slits.  They are much wider than a
+    # slit in the dispersion direction, so their arc lines are broad.  Compare
+    # with the narrow slits (a mask can have as many holes as slits, so the
+    # median is not a safe reference).
+    hole = fwhm > 1.5 * np.percentile(fwhm, 20)
+    HOLES.update(int(x) for x in sid[hole])
 
     fig, axes = plt.subplots(1, 3, figsize=(12.2, 3.6))
     x = np.arange(sid.size)
@@ -276,13 +293,16 @@ def plot_wavecal(redux, key, outdir):
         fh.write(f'{"spat_id":>8s} {"dWave":>8s} {"Nlin":>5s} {"fwhm":>6s} '
                  f'{"RMS(px)":>8s} {"wave_min":>9s} {"wave_max":>9s}  flag\n')
         for i in range(sid.size):
+            flag = 'HOLE?' if hole[i] else ('ok' if good[i] else 'OUTLIER')
             fh.write(f'{sid[i]:8d} {dwave[i]:8.3f} {nlin[i]:5d} {fwhm[i]:6.2f} '
-                     f'{rms[i]:8.3f} {wmin[i]:9.1f} {wmax[i]:9.1f}  '
-                     f'{"ok" if good[i] else "OUTLIER"}\n')
+                     f'{rms[i]:8.3f} {wmin[i]:9.1f} {wmax[i]:9.1f}  {flag}\n')
     note(f'{int(good.sum())}/{sid.size} slits have a dispersion within 5% of the '
          f'median ({med:.3f} A/px); median fit RMS {np.median(rms):.3f} px')
-    if (~good).any():
-        note(f'  slits with a SUSPECT wavelength solution: {list(map(int, sid[~good]))}')
+    if hole.any():
+        note(f'  apertures with broad arc lines, most likely alignment holes (ignore '
+             f'them): {list(map(int, sid[hole]))}')
+    if (~good & ~hole).any():
+        note(f'  slits with a SUSPECT wavelength solution: {list(map(int, sid[~good & ~hole]))}')
 
 
 def plot_spec2d(redux, outdir):
@@ -398,7 +418,7 @@ def plot_spec1d(redux, outdir):
 
 
 def plot_saturation(redux, key, outdir):
-    """Alignment boxes on a slitmask saturate and give unusable wavelength
+    """Alignment holes on a slitmask saturate and give unusable wavelength
     solutions.  Flag any slit whose flat is close to the ADC ceiling."""
     from pypeit.flatfield import FlatImages
     from pypeit.slittrace import SlitTraceSet
@@ -441,7 +461,9 @@ def plot_saturation(redux, key, outdir):
     if not sid:
         return
     sid, peak = np.array(sid), np.array(peak)
-    hot = peak > 0.6 * ceiling
+    # Within 15 per cent of the ADC ceiling.  A lower threshold also catches
+    # well-exposed science slits.
+    hot = peak > 0.85 * ceiling
     fig, ax = plt.subplots(figsize=(9.6, 3.6))
     ax.bar(np.arange(sid.size)[~hot], peak[~hot], color=C1, label='normal')
     if hot.any():
@@ -453,12 +475,12 @@ def plot_saturation(redux, key, outdir):
     ax.set_xticklabels([str(s) for s in sid], rotation=90, fontsize=7)
     ax.set_xlabel('slit spat_id')
     ax.set_ylabel('flat 90th percentile (e-)')
-    ax.set_title('Flat level per slit — saturated slits are usually alignment boxes',
+    ax.set_title('Flat level per slit — saturated slits are usually alignment holes',
                  fontsize=10)
     ax.legend(fontsize=8, frameon=False)
     save(fig, outdir, '07_slit_saturation')
     if hot.any():
-        note(f'slits near saturation (likely alignment boxes, do not use for '
+        note(f'slits near saturation (likely alignment holes, do not use for '
              f'science): {list(map(int, sid[hot]))}')
 
 
@@ -482,6 +504,12 @@ def plot_noise_model(redux, outdir):
     if sub.size < 5:
         note('no sky-subtracted columns found, skipped the noise-model check')
         return
+    # Exclude object-dominated pixels (standards, alignment stars): their residuals
+    # measure the object-profile model, not the noise.
+    var = np.where(s2.ivarmodel > 0, 1.0 / np.where(s2.ivarmodel > 0, s2.ivarmodel, 1), np.inf)
+    gd = gd & (np.abs(s2.objmodel) < 0.1 * np.sqrt(var))
+    if HOLES:
+        gd &= ~np.isin(s2.slits.slit_img(initial=True), list(HOLES))
     v = chi[:, sub][gd[:, sub]]
     sg = 1.4826 * np.median(np.abs(v - np.median(v)))
 
@@ -575,7 +603,7 @@ def main():
         fh.write('  * any line above saying SUSPECT, OUTLIER or FAILED\n')
         fh.write('  * the seam step: under ~0.5 % after normalising is fine\n')
         fh.write('  * the wavelength jump across the seam: should be < 0.1 A\n')
-        fh.write('  * slits flagged near saturation are alignment boxes, not science\n')
+        fh.write('  * slits flagged near saturation or with broad arc lines are alignment holes, not science\n')
         fh.write('  * sigma(chi) should be close to 1.  Much above it means the\n')
         fh.write('    variance model understates the noise -- check the read noise.\n')
 

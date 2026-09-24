@@ -1,0 +1,42 @@
+# Auto-generated PypeIt input file using PypeIt version: 2.0.1.dev1241+gf3a1f1d27.d20260922
+# UTC 2026-09-24T13:50:12.953+00:00
+
+# User-defined execution parameters
+[rdx]
+    spectrograph = magellan_ldss3
+
+# Setup
+setup read
+Setup vph_red_mos:
+  binning: 1,1
+  decker: CDFS01
+  dispname: VPH-Red
+  filter1: OG-590
+setup end
+
+# Data block 
+data read
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/e180402_03
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/e191206_07
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/e201124_25
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/nov22_atm3a2
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/ut251222_23
+      filename |                 frametype |                 ra |                 dec |         target | dispname | decker | binning |                mjd | airmass | exptime | filter1 | amp | calib
+ccd2106c1.fits |                  arc,tilt | 53.145416666666655 |             -28.837 |     CDFS01_arc |  VPH-Red | CDFS01 |     1,1 |  61032.07293981482 |   1.004 |     1.0 |  OG-590 |   1 |     0
+ccd2109c1.fits |                  arc,tilt |  53.14166666666666 |            -28.8435 |     CDFS01_arc |  VPH-Red | CDFS01 |     1,1 |  61032.08629629629 |     1.0 |     1.0 |  OG-590 |   1 |     0
+ccd2110c1.fits |                  arc,tilt | 53.148333333333326 |  -28.84847222222222 |     CDFS01_arc |  VPH-Red | CDFS01 |     1,1 | 61032.086701388886 |     1.0 |     1.0 |  OG-590 |   1 |     0
+ccd2011c1.fits | pixelflat,illumflat,trace | 306.29749999999996 | -29.101083333333335 |    CDFS01_flat |  VPH-Red | CDFS01 |     1,1 |  61031.79373842593 |     1.0 |    14.0 |  OG-590 |   1 |     0
+ccd2012c1.fits | pixelflat,illumflat,trace |          306.49875 |            -29.1015 |    CDFS01_flat |  VPH-Red | CDFS01 |     1,1 |  61031.79429398148 |     1.0 |    14.0 |  OG-590 |   1 |     0
+ccd2013c1.fits | pixelflat,illumflat,trace |  306.6995833333333 |  -29.10188888888889 |    CDFS01_flat |  VPH-Red | CDFS01 |     1,1 |  61031.79484953704 |     1.0 |    14.0 |  OG-590 |   1 |     0
+ccd2014c1.fits | pixelflat,illumflat,trace |  306.8991666666666 | -29.102305555555557 |    CDFS01_flat |  VPH-Red | CDFS01 |     1,1 |  61031.79539351852 |     1.0 |    14.0 |  OG-590 |   1 |     0
+ccd2015c1.fits | pixelflat,illumflat,trace |  307.1008333333333 | -29.102694444444445 |    CDFS01_flat |  VPH-Red | CDFS01 |     1,1 | 61031.795949074076 |     1.0 |    14.0 |  OG-590 |   1 |     0
+ccd2016c1.fits | pixelflat,illumflat,trace |          307.30125 |  -29.10311111111111 |    CDFS01_flat |  VPH-Red | CDFS01 |     1,1 |  61031.79651620371 |     1.0 |    14.0 |  OG-590 |   1 |     0
+ccd2017c1.fits | pixelflat,illumflat,trace | 307.50124999999997 |            -29.1035 |    CDFS01_flat |  VPH-Red | CDFS01 |     1,1 |  61031.79707175926 |     1.0 |    14.0 |  OG-590 |   1 |     0
+ccd2018c1.fits | pixelflat,illumflat,trace |           307.7025 | -29.103916666666667 |    CDFS01_flat |  VPH-Red | CDFS01 |     1,1 |  61031.79761574074 |     1.0 |    14.0 |  OG-590 |   1 |     0
+ccd2019c1.fits | pixelflat,illumflat,trace | 307.90166666666664 | -29.104305555555555 |    CDFS01_flat |  VPH-Red | CDFS01 |     1,1 | 61031.798171296294 |     1.0 |    14.0 |  OG-590 |   1 |     0
+ccd2020c1.fits | pixelflat,illumflat,trace |  308.1033333333333 | -29.104694444444444 |    CDFS01_flat |  VPH-Red | CDFS01 |     1,1 | 61031.798726851855 |     1.0 |    14.0 |  OG-590 |   1 |     0
+ccd2113c1.fits |                   science |  53.14499999999999 | -28.837138888888887 | CDFS01_science |  VPH-Red | CDFS01 |     1,1 |  61032.09883101852 |   1.002 |  1200.0 |  OG-590 |   1 |     0
+ccd2114c1.fits |                   science |  53.14499999999999 |  -28.83647222222222 | CDFS01_science |  VPH-Red | CDFS01 |     1,1 |  61032.11326388889 |   1.009 |  1200.0 |  OG-590 |   1 |     0
+ccd2115c1.fits |                   science |  53.14499999999999 |  -28.83588888888889 | CDFS01_science |  VPH-Red | CDFS01 |     1,1 |  61032.12758101852 |   1.023 |  1200.0 |  OG-590 |   1 |     0
+data end
+

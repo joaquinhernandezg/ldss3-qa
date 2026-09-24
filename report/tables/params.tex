@@ -1,0 +1,42 @@
+\begin{longtable}{lll}
+  \caption{Parameters set by the LDSS3-C spectrograph class that differ from the
+    \pypeit{} defaults (\code{default\_pypeit\_par}). Grism-dependent settings
+    (\code{config\_specific\_par}) are the wavelength template
+    (\code{reid\_arxiv}), \code{method = full\_template}, \code{lamps = HeI, NeI,
+    ArI}, and \code{fwhm} = 6 binned pixels; for longslit masks
+    \code{sync\_predict = nearest}.}
+  \label{tab:params}\\
+  \toprule
+  Parameter group & Parameter & Value \\
+  \midrule
+  \endfirsthead
+  \toprule
+  Parameter group & Parameter & Value \\
+  \midrule
+  \endhead
+  \code{rdx} & \code{spectrograph} & \code{magellan\_ldss3} \\
+  \code{darkframe} & \code{exprng} & \code{1, None} \\
+  \code{arcframe} & \code{exprng} & \code{None, 60} \\
+  \code{tiltframe} & \code{exprng} & \code{None, 60} \\
+  \code{standardframe} & \code{exprng} & \code{None, 100} \\
+  \code{flatfield} & \code{saturated\_slits} & \code{mask} \\
+  \code{wavelengths} & \code{sigdetect} & \code{6.0} \\
+  \code{wavelengths} & \code{fwhm} & \code{5.0} \\
+  \code{wavelengths} & \code{rms\_thresh\_frac\_fwhm} & \code{0.5} \\
+  \code{wavelengths} & \code{match\_toler} & \code{2.5} \\
+  \code{wavelengths} & \code{n\_first} & \code{3} \\
+  \code{wavelengths} & \code{n\_final} & \code{5} \\
+  \code{slitedges} & \code{minimum\_slit\_length} & \code{2.0} \\
+  \code{tilts} & \code{spat\_order} & \code{6} \\
+  \code{tilts} & \code{spec\_order} & \code{6} \\
+  \code{scienceframe} & \code{exprng} & \code{100, None} \\
+  \code{scienceframe / process} & \code{sigclip} & \code{5.0} \\
+  \code{scienceframe / process} & \code{objlim} & \code{2.0} \\
+  \code{reduce / skysub} & \code{bspline\_spacing} & \code{0.8} \\
+  \code{reduce / skysub} & \code{global\_sky\_std} & \code{False} \\
+  \code{flexure} & \code{spec\_method} & \code{boxcar} \\
+  \code{sensfunc} & \code{algorithm} & \code{IR} \\
+  \code{sensfunc} & \code{polyorder} & \code{7} \\
+  \code{sensfunc / IR} & \code{telgridfile} & \code{TellPCA\_3000\_26000\_R15000.fits} \\
+  \bottomrule
+\end{longtable}

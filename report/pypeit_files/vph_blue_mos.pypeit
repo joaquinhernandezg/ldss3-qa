@@ -1,0 +1,39 @@
+# Auto-generated PypeIt input file using PypeIt version: 2.0.1.dev1241+gf3a1f1d27.d20260922
+# UTC 2026-09-24T13:50:12.945+00:00
+
+# User-defined execution parameters
+[rdx]
+    spectrograph = magellan_ldss3
+
+# Setup
+setup read
+Setup vph_blue_mos:
+  binning: 1,1
+  decker: ATM3a2_1
+  dispname: VPH-Blue
+  filter1: Open
+setup end
+
+# Data block 
+data read
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/e180402_03
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/e191206_07
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/e201124_25
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/nov22_atm3a2
+ path /panoramix1/estudiantes/jhernandez/LDSS3_REDUCTION/report_2026/raw/ut251222_23
+      filename |                 frametype |                 ra |                 dec |           target | dispname |   decker | binning |                mjd | airmass | exptime | filter1 | amp | calib
+ccd0046c1.fits |                  arc,tilt | 51.834999999999994 | -13.441722222222223 |     arc ATM3a2_1 | VPH-Blue | ATM3a2_1 |     1,1 |  59899.06946759259 |   1.349 |     1.0 |    Open |   1 |     0
+ccd0047c1.fits |                  arc,tilt | 51.834999999999994 | -13.441722222222223 |     arc ATM3a2_1 | VPH-Blue | ATM3a2_1 |     1,1 |   59899.0700462963 |   1.345 |    10.0 |    Open |   1 |     0
+ccd0024c1.fits | pixelflat,illumflat,trace | 300.07291666666663 | -29.078305555555556 |    flat ATM3a2_1 | VPH-Blue | ATM3a2_1 |     1,1 |         59898.8775 |     1.0 |    70.0 |    Open |   1 |     0
+ccd0025c1.fits | pixelflat,illumflat,trace | 301.56291666666664 |  -29.08111111111111 |    flat ATM3a2_1 | VPH-Blue | ATM3a2_1 |     1,1 |  59898.88150462963 |     1.0 |    80.0 |    Open |   1 |     0
+ccd0026c1.fits | pixelflat,illumflat,trace |  302.0370833333333 |             -29.082 |    flat ATM3a2_1 | VPH-Blue | ATM3a2_1 |     1,1 |  59898.88282407408 |     1.0 |    80.0 |    Open |   1 |     0
+ccd0027c1.fits | pixelflat,illumflat,trace | 303.62291666666664 | -29.084916666666665 |    flat ATM3a2_1 | VPH-Blue | ATM3a2_1 |     1,1 |  59898.88732638889 |     1.0 |    70.0 |    Open |   1 |     0
+ccd0028c1.fits | pixelflat,illumflat,trace |  304.0566666666666 | -29.085694444444442 |    flat ATM3a2_1 | VPH-Blue | ATM3a2_1 |     1,1 |  59898.88853009259 |     1.0 |    70.0 |    Open |   1 |     0
+ccd0029c1.fits | pixelflat,illumflat,trace |          304.49125 |  -29.08647222222222 |    flat ATM3a2_1 | VPH-Blue | ATM3a2_1 |     1,1 |   59898.8897337963 |     1.0 |    70.0 |    Open |   1 |     0
+ccd0045c1.fits | pixelflat,illumflat,trace | 51.834999999999994 | -13.441694444444444 |    flat ATM3a2_1 | VPH-Blue | ATM3a2_1 |     1,1 |  59899.06791666667 |   1.359 |    70.0 |    Open |   1 |     0
+ccd0044c1.fits |                   science | 51.834999999999994 | -13.441611111111111 | science ATM3a2_1 | VPH-Blue | ATM3a2_1 |     1,1 |  59899.05247685185 |   1.478 |  1200.0 |    Open |   1 |     0
+ccd0050c1.fits |                   science | 51.834999999999994 | -13.441777777777778 | science ATM3a2_1 | VPH-Blue | ATM3a2_1 |     1,1 | 59899.074907407405 |   1.315 |  1200.0 |    Open |   1 |     0
+ccd0051c1.fits |                   science | 51.834999999999994 | -13.442055555555555 | science ATM3a2_1 | VPH-Blue | ATM3a2_1 |     1,1 |  59899.08918981482 |   1.239 |  1200.0 |    Open |   1 |     0
+ccd0052c1.fits |                   science | 51.834999999999994 | -13.442083333333333 | science ATM3a2_1 | VPH-Blue | ATM3a2_1 |     1,1 | 59899.103472222225 |   1.178 |  1200.0 |    Open |   1 |     0
+data end
+

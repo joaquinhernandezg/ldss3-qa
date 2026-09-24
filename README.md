@@ -108,3 +108,13 @@ If no slit happens to lie across the seam, the last two checks report
   a flag, not a measurement.
 - The script reads the first `spec2d`/`spec1d` pair it finds for the 2D and 1D
   checks, not all of them. For a multi-frame run it is a spot check.
+
+## Commissioning report
+
+`report/` holds a technical report on the LDSS3-C support in PypeIt, written
+for LCO staff and users: what each reduction stage does, detector measurements
+(read noise, gain, bad columns, dark current), wavelength-calibration
+performance for the three grisms, example reductions, and recommendations.
+The built PDF is `report/ldss3_pypeit_report.pdf`. Every number, table and
+figure is produced by the scripts in `report/scripts/`; see the report's
+appendix D, or run `make` in `report/`.
