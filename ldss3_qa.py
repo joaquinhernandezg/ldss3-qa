@@ -23,12 +23,21 @@ import traceback
 from datetime import datetime, timezone
 from pathlib import Path
 
-import numpy as np
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from matplotlib.colors import AsinhNorm
-from matplotlib.patches import Rectangle
+__version__ = '1.1.0'
+
+# Imported here rather than at the top of main() so that a missing scientific
+# stack is reported clearly, before anything else is attempted.
+try:
+    import numpy as np
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    from matplotlib.colors import AsinhNorm
+    from matplotlib.patches import Rectangle
+except ImportError as exc:                                   # pragma: no cover
+    sys.exit(f'error: a required package is missing ({exc.name}).\n'
+             'Run this in the same conda environment you used for the reduction;\n'
+             'see the README, section "Before you start".')
 
 SEAM = 1024          # amplifier boundary, trimmed unbinned frame
 C1, C2, CG = '#2E6F9E', '#B0543C', '#B4881C'
@@ -535,11 +544,72 @@ def plot_noise_model(redux, outdir):
 
 
 # ------------------------------------------------------------------------ main
+def check_environment(verbose=True):
+    """Confirm this environment can run the QA, and is the LDSS3 fork.
+
+    Returns True if everything needed is present.  Run it with --check before
+    starting a long reduction, rather than discovering a problem afterwards.
+    """
+    ok = True
+
+    def line(label, good, detail=''):
+        nonlocal ok
+        if not good:
+            ok = False
+        if verbose:
+            print(f'  [{"ok" if good else "FAIL"}] {label:<34s} {detail}')
+
+    line('python >= 3.11', sys.version_info >= (3, 11),
+         '.'.join(str(v) for v in sys.version_info[:3]))
+
+    try:
+        import pypeit
+        line('PypeIt importable', True, pypeit.__version__)
+    except ImportError:
+        line('PypeIt importable', False,
+             'not installed in this environment -- activate the env you reduced in')
+        if verbose:
+            print('\n  PypeIt is required.  See the README, "Before you start".')
+        return False
+
+    try:
+        from pypeit.spectrographs.magellan_ldss3 import MagellanLDSS3Spectrograph as S
+        line('magellan_ldss3 present', True)
+    except ImportError:
+        line('magellan_ldss3 present', False, 'this PypeIt has no LDSS3 support')
+        return False
+
+    # Markers of the LDSS3 fork rather than stock PypeIt.
+    line('fork: joins the c1/c2 files', hasattr(S, 'amp_files'),
+         'amp_files()' if hasattr(S, 'amp_files') else
+         'missing -- you appear to have stock PypeIt, not the LDSS3 fork')
+    line('fork: read noise by readout mode', hasattr(S, 'ronoise_by_speed'),
+         'ronoise_by_speed' if hasattr(S, 'ronoise_by_speed') else
+         'missing -- your fork predates the read-noise correction; git pull')
+
+    try:
+        det = S().get_detector_par(1)
+        sat_ok = det['saturation'] < 150000.
+        line('detector saturation sane', sat_ok,
+             f'{det["saturation"]:,.0f} e-' +
+             ('' if sat_ok else '  -- looks like the full well, not the ADC ceiling'))
+    except Exception as exc:
+        line('detector parameters load', False, f'{type(exc).__name__}: {exc}')
+
+    if verbose:
+        print(f'\n  {"Ready." if ok else "Not ready -- fix the FAIL lines above."}')
+    return ok
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('redux', type=Path,
+    ap.add_argument('redux', type=Path, nargs='?', default=None,
                     help='PypeIt reduction directory (contains Calibrations/ and Science/)')
+    ap.add_argument('--check', action='store_true',
+                    help='check the environment is set up correctly and exit')
+    ap.add_argument('--version', action='version',
+                    version=f'ldss3_qa {__version__}')
     ap.add_argument('-o', '--outdir', type=Path, default=None,
                     help='where to write the bundle (default: <redux>/LDSS3_QA)')
     ap.add_argument('--tar', action='store_true',
@@ -548,7 +618,19 @@ def main():
                     help="do not copy PypeIt's own QA folder (makes the bundle smaller)")
     args = ap.parse_args()
 
+    if args.check:
+        print(f'ldss3_qa {__version__} -- environment check\n')
+        sys.exit(0 if check_environment() else 1)
+    if args.redux is None:
+        ap.error('a reduction directory is required (or use --check)')
+
+    if not check_environment(verbose=False):
+        print('Environment check failed.  Run with --check to see what is wrong.\n')
+        sys.exit(1)
+
     redux = args.redux.expanduser().resolve()
+    if not redux.exists():
+        sys.exit(f'error: {redux} does not exist')
     if not (redux / 'Calibrations').is_dir():
         sys.exit(f'error: {redux} does not look like a PypeIt reduction directory '
                  '(no Calibrations/ inside)')

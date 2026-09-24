@@ -1,4 +1,0 @@
-# The scripts import PypeIt itself, so run them in the same environment you
-# reduced in.  Nothing extra is needed beyond what PypeIt already installs:
-#   numpy, scipy, matplotlib, astropy
-# See the README for the recommended environment.

@@ -2,4 +2,14 @@ __pycache__/
 *.pyc
 LDSS3_QA/
 LDSS3_QA.tar.gz
+
+# LaTeX build artefacts
+*.aux
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
+*.toc
+*.blg
+*.bbl
 *.log
