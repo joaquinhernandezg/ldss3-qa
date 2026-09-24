@@ -212,9 +212,24 @@ Frames taken without a grism (acquisition, through-slit and direct images) are
 discarded. Science frames and standards are separated by exposure time, at
 \SI{100}{\second} by default.
 
+It must be stressed that the frame type cannot be determined from the header
+alone. LDSS3-C writes no keyword that identifies an exposure as an arc, a flat
+or a science frame: \code{EXPTYPE} takes only the values \code{Object},
+\code{Flat}, \code{Bias} and \code{Dark}, and, as noted above, arcs and flats
+are written with either of the first two. What the pipeline does is therefore a
+naive inference from the free text of the \code{OBJECT} card, which the observer
+is at liberty to write as they please. It reproduces the naming conventions we
+have encountered in the archive (\cref{tab:typing}) and will fail, silently, on
+any convention it has not seen. \textbf{The classification must always be
+checked against the observing log before the data are reduced.} The
+\code{.pypeit} file lists one row per exposure together with the type assigned
+to it, and editing that column is the supported way of correcting it.
+
 \begin{table}[t]
   \centering\small
-  \caption{Frame classification from the \code{OBJECT} card.}
+  \caption{Frame classification inferred from the \code{OBJECT} card. These are
+  heuristics, not header keywords, and must be verified against the observing
+  log.}
   \label{tab:typing}
   \begin{tabular}{lll}
     \toprule
@@ -814,7 +829,9 @@ git clone -b ldss3_multigrating https://github.com/joaquinhernandezg/PypeIt.git
 cd PypeIt && pip install -e .
 \end{lstlisting}
 Inspect the raw data, write the input file for one configuration, check its
-\code{frametype} column, and reduce:
+\code{frametype} column against the observing log --- the types are inferred
+from the text of the \code{OBJECT} card and cannot be taken on trust
+(\cref{sec:typing}) --- and reduce:
 \begin{lstlisting}
 pypeit_setup -s magellan_ldss3 -r /path/to/raw
 pypeit_setup -s magellan_ldss3 -r /path/to/raw -c A
