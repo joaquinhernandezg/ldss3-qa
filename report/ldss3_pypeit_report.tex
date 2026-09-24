@@ -59,8 +59,7 @@ frames at \nBiasEpochs{} epochs we measure a read noise of
 \ronAmpOne{} and \ronAmpTwo{}~\si{\electron} for the two amplifiers in the
 Fast readout mode, consistent with the published values and
 \ronExcessRange\,\% larger than the values recorded in the
-\code{ENOISE} header keyword. Photon-transfer gains of \gainAmpOne{} and
-\gainAmpTwo{}~\si{\electron\per\adu} agree with the \code{EGAIN} keyword.
+\code{ENOISE} header keyword.
 Arc-lamp wavelength solutions of the \SI{1}{arcsec} slits reach median RMS
 residuals of 0.04, 0.15 and 0.23~\AA{} for VPH-Blue, VPH-Red and VPH-All
 (0.06--0.12 pixels), and sky emission lines in the calibrated science frames lie
@@ -474,19 +473,11 @@ overscan. The results are listed in \cref{tab:ron} and shown in
 
 \begin{figure}[t]
   \centering
-  \begin{minipage}[t]{0.49\textwidth}
-    \includegraphics[width=\textwidth]{figures/readnoise}
-    \caption{Read noise measured from bias pairs at each epoch. Horizontal lines
-      are the published Fast-mode values (upper) and the \code{ENOISE} keyword
-      values (lower) for amplifier~1 (solid) and 2 (dashed).}
-    \label{fig:ron}
-  \end{minipage}\hfill
-  \begin{minipage}[t]{0.49\textwidth}
-    \includegraphics[width=\textwidth]{figures/ptc}
-    \caption{Photon-transfer curve for \ptcBest. Filled points are used in the
-      fit; the lines have slope $1/g$.}
-    \label{fig:ptc}
-  \end{minipage}
+  \includegraphics[width=0.62\textwidth]{figures/readnoise}
+  \caption{Read noise measured from bias pairs at each epoch. Horizontal lines
+    are the published Fast-mode values (upper) and the \code{ENOISE} keyword
+    values (lower) for amplifier~1 (solid) and 2 (dashed).}
+  \label{fig:ron}
 \end{figure}
 
 The read noise enters the variance of every pixel, so the choice matters most
@@ -513,35 +504,10 @@ with a warning, only for an unrecognised mode.
   \label{fig:noise}
 \end{figure}
 
-\subsection{Gain}
-\label{sec:gain}
-
-The gain was measured with the photon-transfer method \citep{Janesick2007} from
-pairs of flats with identical set-up and exposure time. For each pair, the
-second frame was scaled to the median level of the first, the pixels were binned
-by mean signal, and the variance of the pair difference was compared with the
-signal in each bin, after subtracting the read-noise term. Only pixels where the
-illumination is locally smooth (gradient below \SI{0.5}{\percent} per pixel)
-were used, so that small shifts of the slit image between the two exposures do
-not add variance. \Cref{fig:ptc} shows an example and \cref{tab:gain} lists the
-results. Eight of the twelve sets give consistent gains. Of the other
-\nPtcRejected, three (all from the 2025 December run) depart from \code{EGAIN}
-by more than \SI{10}{\percent} and have curved transfer curves, which indicates
-that the illumination changed between the two exposures of a pair in a way that a
-single scale factor does not remove; the fourth has too few usable points on one
-amplifier. The mean of the consistent sets is \gainAmpOne{} and \gainAmpTwo~\si{\electron\per\adu},
-in agreement with \code{EGAIN} (1.65 and 1.47) to within \gainAgreement\,\%. The
-pipeline uses \code{EGAIN}.
-
-\input{tables/gain}
-
-\subsection{Bias level and dark current}
+\subsection{Dark current}
 \label{sec:dark}
 
-The overscan level differs between epochs by up to \biasLevelSpread~ADU, and
-within a night it is stable to better than \SI{\biasLevelNightly}{\adu}, which
-justifies the row-by-row overscan subtraction without a bias frame. The dark
-current, measured from dark exposures of \darkExptimes~s bracketed by biases
+The dark current, measured from dark exposures of \darkExptimes~s bracketed by biases
 (sigma-clipped mean of the difference), is \darkRate~\si{\electron\per\pixel\per\hour},
 with amplifier~2 consistently about twice amplifier~1. The pipeline adopts
 \SI{25}{\electron\per\pixel\per\hour} in its noise model. For a
