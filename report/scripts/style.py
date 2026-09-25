@@ -32,6 +32,11 @@ DATASETS = {
     'vph_red_mos': ('VPH-Red', 'mos', 'VPH-Red, mask CDFS01'),
 }
 
+# Data sets with no detected source.  Their arc and flat calibration is used
+# throughout, but they take no part in the analyses that need an object: the
+# example reductions and the sky-line zero point.
+NO_OBJECT = {'vph_blue_longslit', 'vph_red_mos'}
+
 # Text width of the report (article, 1in margins on A4) in inches
 TEXTWIDTH = 6.3
 

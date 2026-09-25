@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from style import REPORT, RESULTS, TABLES, REDUX, DATASETS          # noqa: E402
+from style import REPORT, RESULTS, TABLES, REDUX, DATASETS, NO_OBJECT  # noqa: E402
 
 ENOISE = (4.67, 5.06)
 EGAIN = (1.65, 1.47)
@@ -332,15 +332,19 @@ def calib_tables(N):
                 for o in s.get('objects', []):
                     if o['flex_shift'] is not None and o['slit'] not in boxes:
                         flex.append(o['flex_shift'])
+            if ds in NO_OBJECT:
+                continue
             for sid, x in (s.get('sky_lines') or {}).items():
                 if int(sid) not in boxes:
                     sky.setdefault(ds, []).append((x['median'], x['n'], x['disp']))
     br = {}
     for ds in DATASETS:
+        if ds in NO_OBJECT:
+            continue
         for s_ in cal[ds]['science']:
             if 'science' in s_['frametype']:
                 br.setdefault(ds, []).append((s_['noise']['sigma_faintsky'], s_['noise']['sigma_brightsky']))
-    for ds, key in (('vph_red_longslit', 'RedLS'), ('vph_blue_mos', 'BlueMOS'), ('vph_red_mos', 'RedMOS')):
+    for ds, key in (('vph_red_longslit', 'RedLS'), ('vph_blue_mos', 'BlueMOS')):
         v = np.array(br[ds])
         N[f'chiFaint{key}'] = f'{np.median(v[:, 0]):.2f}'
         N[f'chiBright{key}'] = f'{np.median(v[:, 1]):.2f}'
@@ -364,9 +368,8 @@ def calib_tables(N):
                     f"{np.max(np.abs(v[:, 0])) / np.median(v[:, 2]):.2f} \\\\")
     allmed = np.concatenate([np.array(v)[:, 0] for v in sky.values()])
     # Red end of VPH-Red, beyond the reddest arc line
-    red = [o for s_ in cal['vph_red_longslit']['science'] + cal['vph_red_mos']['science']
+    red = [o for s_ in cal['vph_red_longslit']['science']
            for sid, x in (s_.get('sky_lines') or {}).items()
-           if int(sid) not in set(cal['vph_red_mos']['boxes'])
            for l, o in zip(x['lines'], x['offsets']) if l > 9800]
     N['skyRedEndN'] = str(len(red))
     N['skyRedEndMedian'] = f'{np.median(red):+.2f}'

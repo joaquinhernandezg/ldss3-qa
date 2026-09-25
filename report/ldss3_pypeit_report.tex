@@ -97,9 +97,8 @@ evaluates it on data of every grism. \Cref{sec:data} presents the instrument and
 the data sets. \Cref{sec:procedure} describes each stage of the reduction and
 the instrument-specific choices behind it. \Cref{sec:detector} reports the
 detector characterisation, \cref{sec:wavecal} the wavelength-calibration
-performance and \cref{sec:results} example reductions. \Cref{sec:recommend}
-collects recommendations for observers and for the observatory, and
-\cref{sec:issues} lists the known limitations. The scripts that produce every
+performance and \cref{sec:results} example reductions, and \cref{sec:issues}
+lists the known limitations. The scripts that produce every
 number, table and figure in this report are distributed with it
 \citep{ldss3_qa}.
 
@@ -250,8 +249,8 @@ We inspected the classification of all frames in the configurations used here.
 Two frames were misclassified: an arc named ``Hiltner600 - NeHeAr'', typed as a
 standard because \code{nehear} is not among the keywords, and a \SI{1}{\second}
 test exposure named ``Tests'', typed as a standard. The first was retyped and
-the second removed by hand in the input file, which is the supported way of overriding the automatic
-classification (\cref{sec:recommend}).
+the second removed by hand in the input file, which is the supported way of
+overriding the automatic classification.
 
 A configuration is defined by the grism, the slitmask (\code{APERTURE}), the
 binning and the order-blocking filter. The filter is included because it changes
@@ -319,7 +318,7 @@ wider than the slits in the dispersion direction, so they are over-exposed in
 flats and arcs and their arc lines are broad; they cannot be calibrated and must
 be ignored (\cref{sec:holes}). A slit whose edge falls on a masked bad column
 cannot be traced there and may be lost; this did not occur for the two masks
-studied, but should be considered in mask design (\cref{sec:recommend}).
+studied, but should be considered in mask design.
 
 \begin{figure}[t]
   \centering
@@ -369,8 +368,7 @@ and are not associated automatically; for this report we combined them by hand.
 This is adequate for the pixel-to-pixel correction and for slit tracing, but the
 spectral shape of an unfiltered flat differs from that of the science data below
 \SI{\sim6000}{\angstrom}, and the extra light is what saturates the alignment holes.
-Flats should be taken with the same filter as the science
-(\cref{sec:recommend}).
+Flats should be taken with the same filter as the science.
 
 \begin{figure}[t]
   \centering
@@ -644,21 +642,24 @@ not used in this report.
 \section{Example reductions}
 \label{sec:results}
 
-\Cref{fig:science} shows, for each data set with science or standard-star
-exposures, the sky-subtracted two-dimensional spectrum and the optimally extracted
+\Cref{fig:science} shows, for each data set in which a source was detected, the
+sky-subtracted two-dimensional spectrum and the optimally extracted
 one-dimensional spectrum of the object with the highest signal-to-noise ratio,
 excluding alignment stars. The longslit standards reach $S/N>100$ per pixel. The
 multi-slit targets are faint (knots of a lensed arc in ATM3a2\_1), with
-$S/N\sim1$ per pixel in a single exposure, and are shown in 8-pixel bins.
+$S/N\sim1$ per pixel in a single exposure, and are shown in 8-pixel bins. The
+VPH-Blue longslit and the VPH-Red mask CDFS01 yielded no detected source and are
+not considered here; their arc and flat calibration is reported in
+\cref{sec:wavecal} as for the other data sets.
 
 The sky subtraction was assessed with the same $\chi$ statistic as in
 \cref{sec:ron}, separately for the \SI{10}{\percent} of sky-dominated pixels with
 the brightest sky and for the rest. In the longslit, $\sigma_\chi$ is
 \chiFaintRedLS{} and \chiBrightRedLS{} respectively: sky subtraction is
-noise-limited even on the brightest lines. In the multi-slit masks it is
-\chiFaintBlueMOS{} and \chiBrightBlueMOS{} (ATM3a2\_1) and \chiFaintRedMOS{} and
-\chiBrightRedMOS{} (CDFS01), and the distribution on bright lines has extended
-tails: sky-line residuals exceed the noise by \SIrange{10}{20}{\percent}. These
+noise-limited even on the brightest lines. In the multi-slit mask ATM3a2\_1 it is
+\chiFaintBlueMOS{} and \chiBrightBlueMOS{}, and the distribution on bright lines
+has extended tails: sky-line residuals exceed the noise by
+\SIrange{10}{20}{\percent}. These
 residuals, visible as spikes at the OH lines in the faint spectra of
 \cref{fig:science}, are typical of short slits (6--\SI{12}{arcsec}), where the
 sky model has less spatial leverage, and should be considered when interpreting
@@ -673,57 +674,6 @@ features at bright sky lines.
     electrons, before flux calibration.}
   \label{fig:science}
 \end{figure}
-
-%======================================================================
-\section{Recommendations for observers and for the observatory}
-\label{sec:recommend}
-
-\subsection*{For observers}
-\begin{itemize}
-  \item \textbf{Name frames consistently.} The \code{OBJECT} card drives the
-    classification (\cref{tab:typing}). Include \code{arc}, \code{flat} (or
-    \code{Qh}), \code{bias} or \code{dark} as a separate word in the names of
-    calibration frames, e.g.\ ``arc CDFS01'', ``flat CDFS01''. Names such as
-    ``NeHeAr'' are not recognised.
-  \item \textbf{Take flats with the science filter.} Flats and arcs should be
-    taken with the same grism, slitmask and order-blocking filter as the science
-    frames. A change of filter defines a new configuration, and flats taken
-    without the filter do not match the spectral shape of the science data.
-  \item \textbf{Keep the two amplifier files together.} Both \code{c1} and
-    \code{c2} files of every exposure are needed. If only one is available the
-    pipeline reduces that half and reports it in the log.
-  \item \textbf{Standards.} Standards and science frames are separated at
-    \SI{100}{\second} by default; standards longer than this must be marked by
-    hand or the limit changed.
-  \item \textbf{Mask design.} Avoid placing slit edges on the bad columns of
-    \cref{tab:bpm} (the region 1490--1700 of the trimmed frame is the most
-    affected) and avoid slitlets shorter than \SI{\sim5}{arcsec}, whose arcs give
-    unreliable wavelength solutions.
-  \item \textbf{Alignment holes} are reduced as slits, with invalid wavelength
-    solutions; ignore them (\cref{sec:holes}).
-  \item \textbf{Flat exposure level.} Flats taken without the blocking filter
-    saturate the alignment holes and are brighter than the science
-    configuration requires; use the science filter and keep the slit
-    illumination well below \SI{65000}{\adu}.
-  \item \textbf{Check the output} with \code{ldss3\_qa.py}
-    (\cref{app:quickstart}).
-\end{itemize}
-
-\subsection*{For the observatory}
-\begin{itemize}
-  \item \textbf{\code{ENOISE}.} The keyword reports 4.67 and 5.06~\si{\electron},
-    close to the Slow-mode read noise, for Fast-mode data, underestimating the
-    read noise by \ronExcessRange\,\%. It should reflect the readout mode.
-  \item \textbf{\code{JD}.} The \code{JD} keyword cannot be used to derive the
-    observation time; the pipeline computes the MJD from \code{UT-DATE} and
-    \code{UT-TIME}.
-  \item \textbf{\code{EXPTYPE}.} Arcs and flats are written with either
-    \code{EXPTYPE = 'Flat'} or \code{'Object'}, and biases record the grism in
-    the beam. A reliable exposure type (e.g.\ set from the lamp status) would
-    make the classification independent of the observers' naming.
-  \item \textbf{Documentation.} We suggest listing the bad-column ranges of
-    \cref{tab:bpm} and the longslit bridge positions in the instrument manual.
-\end{itemize}
 
 %======================================================================
 \section{Known limitations and future work}

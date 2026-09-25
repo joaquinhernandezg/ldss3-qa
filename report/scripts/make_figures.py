@@ -21,7 +21,7 @@ from astropy.table import Table
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import style                                                       # noqa: E402
-from style import (FIGS, RESULTS, REDUX, RAW, DATASETS, TEXTWIDTH, AMP_COLOR, ION_COLOR,
+from style import (FIGS, RESULTS, REDUX, RAW, DATASETS, NO_OBJECT, TEXTWIDTH, AMP_COLOR, ION_COLOR,
                    BLUE, ORANGE, AQUA, YELLOW, VIOLET, INK, INK2, GRID, save)  # noqa: E402
 
 from pypeit import dataPaths                                       # noqa: E402
@@ -384,8 +384,8 @@ def fig_science_examples():
     from pypeit.spec2dobj import AllSpec2DObj
     from pypeit.specobjs import SpecObjs
     cal = load_json('calibs.json')
-    sets = [ds for ds in ('vph_all_longslit', 'vph_red_longslit', 'vph_blue_mos', 'vph_red_mos')
-            if cal.get(ds, {}).get('science')]
+    sets = [ds for ds in ('vph_all_longslit', 'vph_red_longslit', 'vph_blue_mos')
+            if ds not in NO_OBJECT and cal.get(ds, {}).get('science')]
     fig, axes = plt.subplots(len(sets), 2, figsize=(TEXTWIDTH, 1.95 * len(sets)),
                              gridspec_kw=dict(width_ratios=[1, 2.1], hspace=0.65, wspace=0.32))
     for (ax2, ax1), ds in zip(np.atleast_2d(axes), sets):
